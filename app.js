@@ -14,20 +14,9 @@ var mongoose = require('mongoose'),
     mongoose.connect('mongodb://'+url+':27017/Demo'); 
 
 var kafka = require('kafka-node');
-var Consumer = kafka.Consumer,
-    client = new kafka.KafkaClient({kafkaHost:"kafka-1:9092,kafka-2:9092,kafka-3:9092,kafka-4:9092",requestTimeout:2000}),
-    consumer = new Consumer(
-	client,
-	[
-		{ topic: 'post-topic',offset: -1 }
-	],
-	{
-		autoCommit:false,
-	}
-    );
 var ConsumerGroup = kafka.ConsumerGroup;
 var options = {
-	kafkaHost:"kafka-1:9092,kafka-2:9092,35.231.191.95:9092,kafka-4:9092",
+	kafkaHost:"kafka-1:9092,kafka-2:9092,kafka-3:9092,kafka-4:9092",
 	groupId: 'ExampleTestGroup',
   	autoCommit:false,
 	sessionTimeout: 15000,
@@ -42,31 +31,26 @@ var consumerGroup = new ConsumerGroup(options, 'post-topic');
 consumerGroup.on('message', function (message) {
     obj = JSON.parse(message.value)
     console.log(obj.method)
-    if(obj.method =='post') { 
+    if(obj.method == 'post') {
         var model = mongoose.model(obj.model);
         var mydata = new model(obj.data);
-	console.log(obj.model)
         mydata.save(function(err,data){
         if(err)
-	   console.log(err)
-	console.log(data)
+           console.log(err)
+        console.log(data)
         });
     }else if(obj.method == 'put'){
         var model = mongoose.model(obj.model);
-        var query = {USERID:obj.id}
-	
-	console.log(obj.model+' '+obj.id)
-	model.findOneAndUpdate(query,obj.data,{new:true}, function(err,data){
-	if(err)
-	    console.log(err)
-	console.log(data)
-        }); 
+        model.findOneAndUpdate(obj.query,obj.data,{new:true}, function(err,data){
+        if(err)
+            console.log(err)
+        console.log(data)
+        });
     }else if(obj.method == 'del') {
         var model = mongoose.model(obj.model);
-        var query = {USERID:obj.id}   
-        model.remove(query, function(err, data) {
+        model.remove(obj.query, function(err, data) {
         if (err)
-	    console.log(err)
+            console.log(err)
         console.log(data)
         });
     }
