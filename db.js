@@ -1,7 +1,7 @@
 var mongoose = require('mongoose'),
 Schema = mongoose.Schema;
 
-var User = new Schema({
+var users = new Schema({
     USERID: {type: String ,unique: true},
     FIRSTNAME: {type: String},
     LASTNAME: {type: String},
@@ -21,4 +21,4 @@ var User = new Schema({
     CWT: {type: String },
     CWT_NAME: {type: String },
 });
-module.exports = mongoose.model('User', User);
+module.exports = mongoose.model('User', users);

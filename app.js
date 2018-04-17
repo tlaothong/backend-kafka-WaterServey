@@ -9,8 +9,9 @@ var bodyParser = require('body-parser')
 var mongoose = require('mongoose'),
     db = require('./db'),
     urls = '35.196.18.119'
+    url = '35.227.94.29'
     mongoose.Promise = global.Promise;
-    mongoose.connect('mongodb://'+urls+':27017/Demo'); 
+    mongoose.connect('mongodb://'+url+':27017/Demo'); 
 
 var kafka = require('kafka-node');
 var Consumer = kafka.Consumer,
@@ -40,17 +41,36 @@ var consumerGroup = new ConsumerGroup(options, 'post-topic');
 
 consumerGroup.on('message', function (message) {
     obj = JSON.parse(message.value)
+    console.log(obj.method)
     if(obj.method =='post') { 
         var model = mongoose.model(obj.model);
         var mydata = new model(obj.data);
-	//console.log(model);
-	console.log(mydata);
+	console.log(obj.model)
         mydata.save(function(err,data){
         if(err)
 	   console.log(err)
+	console.log(data)
         });
-    };
-    });
+    }else if(obj.method == 'put'){
+        var model = mongoose.model(obj.model);
+        var query = {USERID:obj.id}
+	
+	console.log(obj.model+' '+obj.id)
+	model.findOneAndUpdate(query,obj.data,{new:true}, function(err,data){
+	if(err)
+	    console.log(err)
+	console.log(data)
+        }); 
+    }else if(obj.method == 'del') {
+        var model = mongoose.model(obj.model);
+        var query = {USERID:obj.id}   
+        model.remove(query, function(err, data) {
+        if (err)
+	    console.log(err)
+        console.log(data)
+        });
+    }
+});
 app.listen(5000,function(){
     console.log('Kafka producer running at  5000')
 });
