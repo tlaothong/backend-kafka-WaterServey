@@ -41,14 +41,16 @@ consumerGroup.on('message', function (message) {
         });
     }else if(obj.method == 'put'){
         var model = mongoose.model(obj.model);
-        model.findOneAndUpdate(obj.query,obj.data,{new:true}, function(err,data){
+	var q = obj.query;
+        model.findOneAndUpdate(q,obj.data,{new:true}, function(err,data){
         if(err)
             console.log(err)
         console.log(data)
         });
     }else if(obj.method == 'del') {
         var model = mongoose.model(obj.model);
-        model.remove(obj.query, function(err, data) {
+	var q = obj.query;
+        model.deleteOne(q,function(err, data) {
         if (err)
             console.log(err)
         console.log(data)
@@ -56,5 +58,5 @@ consumerGroup.on('message', function (message) {
     }
 });
 app.listen(5000,function(){
-    console.log('Kafka producer running at  5000')
+    console.log('Kafka consumer running at  5000')
 });
