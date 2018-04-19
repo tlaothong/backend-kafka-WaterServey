@@ -8,10 +8,10 @@ var bodyParser = require('body-parser')
   }));
 var mongoose = require('mongoose'),
     db = require('./db'),
-    urls = '35.196.18.119'
+    urls = '35.196.123.192' //mongo router
     url = '35.227.94.29'
     mongoose.Promise = global.Promise;
-    mongoose.connect('mongodb://'+url+':27017/Demo'); 
+    mongoose.connect('mongodb://'+urls+':27017/Demo'); 
 
 var kafka = require('kafka-node');
 var ConsumerGroup = kafka.ConsumerGroup;

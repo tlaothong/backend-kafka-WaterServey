@@ -53,3 +53,36 @@ var Area = new Schema({
     FS : { Type : String},
 });
 module.exports = mongoose.model('Area', Area);
+
+var Tablet = new Schema({
+    tablet_sn : { type : String },
+    powerbank_sn : { type : String },
+    sim_sn : { type : String },
+    user_id : { type : String },
+
+});
+module.exports = mongoose.model('Tablet', Tablet);
+
+var Progress = new Schema({
+    ea : { type: Schema.Types.ObjectId,ref : 'Area' },
+    max_Building : {type : Number} ,
+    max_Household : {type : Number} ,
+    max_Agricultural_HH : {type : Number} ,
+    value_Building : {type : Number} ,
+    value_Household : {type : Number} ,
+    value_Agricultural_HH : {type : Number} ,
+    progresses : { type: Schema.Types.ObjectId , ref : 'Progress'}
+});
+module.exports = mongoose.model('Progress', Progress);
+
+var SN1 = new Schema({
+    SN1P1 : { type: Schema.Types.ObjectId,ref: 'SN1P1' },
+    SN1P2 : [{ type: Schema.Types.ObjectId,ref: 'SN1P2' }],
+    status_approve : Number ,
+    status_data : Number ,
+    messeges : [{
+        date: {type: Date},
+        massage: {type: String}
+    }]
+});
+module.exports = mongoose.model('SN1', SN1);
