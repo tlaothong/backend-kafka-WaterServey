@@ -14,7 +14,7 @@ var Tablet = new Schema({
 }, { strict: false });
 module.exports = mongoose.model('Tablet', Tablet);
 
-var SN1 = new Schema({
+var sn1 = new Schema({
 }, { strict: false });
 module.exports = mongoose.model('SN1', sn1);
 

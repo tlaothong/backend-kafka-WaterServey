@@ -2,7 +2,7 @@ var express = require('express'),
   app = express()
 
 var bodyParser = require('body-parser')
-  app.use( bodyParser.json() );       // to support JSON-encoded bodies
+  app.use(bodyParser.json({limit: '50mb'}))
   app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
     extended: true
   }));
@@ -21,8 +21,8 @@ var options = {
   	autoCommit:false,
 	sessionTimeout: 15000,
   	protocol: ['roundrobin'],
-  	asyncPush: false,
   	id: 'consumer1',
+	asyncPush: false,
  	fromOffset: 'latest'
 }
 
@@ -45,6 +45,7 @@ consumerGroup.on('message', function (message) {
           if (ids.length == 0)
             ids.push(Number(body.CWT + body.TID + '0000'))
           id = ids.sort().reverse()[0] + 1;
+	  console.log(id)
           body.USERID = String(id);
       body.STATUS = true
           var mydata = new user(body);
@@ -52,8 +53,8 @@ consumerGroup.on('message', function (message) {
             if (err)
               console.log(err)
             console.log(data)
-          });
-        });
+          });  
+	});
       }
       else {
         var model = mongoose.model(obj.model);
