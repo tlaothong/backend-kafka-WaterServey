@@ -69,6 +69,7 @@ consumerGroup.on('message', function (message) {
       var model = mongoose.model(obj.model);
       var q = obj.query;
       delete obj.data.__v;
+      delete obj.data._id
       model.findOneAndUpdate(q, obj.data, { upsert: true, new: true }, function (err, data) {
         if (err)
           console.log(err)
