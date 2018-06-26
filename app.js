@@ -23,15 +23,20 @@ var options = {
   	protocol: ['roundrobin'],
   	id: 'consumer1',
 	asyncPush: false,
- 	fromOffset: 'latest'
+   fromOffset: 'latest',
+   fetchMaxWaitMs: 1000,
+   fetchMaxBytes: 1024 * 1024 * 100,
 }
 
 var consumerGroup = new ConsumerGroup(options, 'post-topic');
 
 consumerGroup.on('message', function (message) {
+    consumerGroup.pause()
     obj = JSON.parse(message.value)
     console.log(obj.method)
+    //create
     if (obj.method == 'put') {
+      //create user
       if (obj.model == 'User') {
         var user = mongoose.model('User');
         user.find({ CWT: obj.data.CWT, TID: obj.data.TID }, { 'USERID': 1, '_id': 0 }, function (err, data) {
@@ -45,18 +50,18 @@ consumerGroup.on('message', function (message) {
           if (ids.length == 0)
             ids.push(Number(body.CWT + body.TID + '0000'))
           id = ids.sort().reverse()[0] + 1;
-	  console.log(id)
           body.USERID = String(id);
-      body.STATUS = true
+          body.STATUS = true
           var mydata = new user(body);
           mydata.save(function (err, data) {
             if (err)
               console.log(err)
             console.log(data)
           });  
-	});
+	      });
       }
       else {
+        //create others
         var model = mongoose.model(obj.model);
         var mydata = new model(obj.data);
         mydata.save(function (err, data) {
@@ -65,6 +70,8 @@ consumerGroup.on('message', function (message) {
           console.log(data)
         });
       }
+
+      //Update
     } else if (obj.method == 'post') {
       var model = mongoose.model(obj.model);
       var q = obj.query;
@@ -75,6 +82,7 @@ consumerGroup.on('message', function (message) {
           console.log(err)
         console.log(data)
       });
+      //delete
     } else if (obj.method == 'del') {
       var model = mongoose.model(obj.model);
       var q = obj.query;
@@ -84,6 +92,7 @@ consumerGroup.on('message', function (message) {
         console.log(data)
       });
     }
+    consumerGroup.resume()
   });
 
 app.listen(5000,function(){
