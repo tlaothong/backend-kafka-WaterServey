@@ -16,7 +16,7 @@ var mongoose = require('mongoose'),
 var kafka = require('kafka-node');
 var ConsumerGroup = kafka.ConsumerGroup;
 var options = {
-	kafkaHost:"kafka-1:9092,kafka-2:9092,kafka-3:9092,kafka-4:9092",
+	kafkaHost:"kafka-1:9092,kafka-2:9092,kafka-3:9092,kafka-4:9092,instance-1:9092",
 	groupId: 'ExampleTestGroup',
   	autoCommit:false,
 	sessionTimeout: 15000,

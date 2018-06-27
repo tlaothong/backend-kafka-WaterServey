@@ -2,6 +2,7 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var users = new Schema({
+'USERID' : {type : String , unique : true, required : true, dropDups: true  }
 }, { strict: false });
 module.exports = mongoose.model('User', users);
 
