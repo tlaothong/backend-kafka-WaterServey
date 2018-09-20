@@ -16,7 +16,7 @@ var mongoose = require('mongoose'),
 var kafka = require('kafka-node');
 var ConsumerGroup = kafka.ConsumerGroup;
 var options = {
-	kafkaHost:"kafka-1:9092,kafka-2:9092,kafka-3:9092,kafka-4:9092,instance-1:9092",
+	kafkaHost:"instance-1:9092",
 	groupId: 'ExampleTestGroup',
   	autoCommit:false,
 	sessionTimeout: 15000,
@@ -52,20 +52,41 @@ consumerGroup.on('message', function (message) {
           id = ids.sort().reverse()[0] + 1;
           body.USERID = String(id);
           body.STATUS = true
-          bool = true
-          while(bool) {
+	  mydata = new user(body);
+          mydata.save(function (err, data) {
+            if (err) 
+              console.log(err)
+	    console.log(data)
+            });  
+          
+	});
+      }
+      if (obj.model == 'User-list') {
+        var user = mongoose.model('User');
+	var li = obj.data
+	for (var i in li) {
+	  console.log(i)
+          user.find({ CWT: i.CWT, TID: i.TID }, { 'USERID': 1, '_id': 0 }, function (err, data1) {
+            if (err)
+              console.log(err);
+            ids = []
+            for (j in data1) {
+              ids.push(Number(data[j].toObject()['USERID']));
+            }
+	    var  body = i
+            if (ids.length == 0)
+              ids.push(Number(body.CWT + body.TID + '0000'))
+            id = ids.sort().reverse()[0] + 1;
+ 	    body.USERID = String(id);
+            body.STATUS = true
             var mydata = new user(body);
             mydata.save(function (err, data) {
-              if (err) {
-                console.log(err)
-                body.USERID = String(Number(id)+1);
-              } else {
-                console.log(data)
-                bool = false
-              }
-            });  
-          }
-	      });
+            if (err)
+              console.log(err)
+            console.log(data)
+            });
+	  });
+        }
       }
       else {
         //create others
