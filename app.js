@@ -52,14 +52,13 @@ consumerGroup.on('message', function (message) {
           id = ids.sort().reverse()[0] + 1;
           body.USERID = String(id);
           body.STATUS = true
-          var mydata = new user(body);
           bool = true
           while(bool) {
+            var mydata = new user(body);
             mydata.save(function (err, data) {
               if (err) {
                 console.log(err)
                 body.USERID = String(Number(id)+1);
-                mydata = new user(body);
               } else {
                 console.log(data)
                 bool = false
