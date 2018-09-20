@@ -53,11 +53,19 @@ consumerGroup.on('message', function (message) {
           body.USERID = String(id);
           body.STATUS = true
           var mydata = new user(body);
-          mydata.save(function (err, data) {
-            if (err)
-              console.log(err)
-            console.log(data)
-          });  
+          bool = true
+          while(bool) {
+            mydata.save(function (err, data) {
+              if (err) {
+                console.log(err)
+                body.USERID = String(Number(id)+1);
+                mydata = new user(body);
+              } else {
+                console.log(data)
+                bool = false
+              }
+            });  
+          }
 	      });
       }
       else {
